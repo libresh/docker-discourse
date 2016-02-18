@@ -13,6 +13,7 @@ RUN curl -L https://github.com/discourse/discourse/archive/v${DISCOURSE_VERSION}
  && bundle install --deployment --without test --without development
 
 ENV RAILS_ENV production
+ENV RUBY_GC_MALLOC_LIMIT 90000000
 ENV DISCOURSE_DB_HOST postgres
 ENV DISCOURSE_REDIS_HOST redis
 ENV DISCOURSE_SERVE_STATIC_ASSETS true
