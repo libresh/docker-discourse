@@ -2,7 +2,7 @@ FROM rails
 
 WORKDIR /usr/src/app
 
-ENV DISCOURSE_VERSION 1.4.3
+ENV DISCOURSE_VERSION 1.4.5
 
 RUN apt-get update && apt-get install -y --no-install-recommends imagemagick libxml2 \
  && rm -rf /var/lib/apt/lists/*
