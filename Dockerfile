@@ -2,7 +2,7 @@ FROM rails
 
 WORKDIR /usr/src/app
 
-ENV DISCOURSE_VERSION=1.6.0.beta7 \
+ENV DISCOURSE_VERSION=1.6.0.beta10 \
     RAILS_ENV=production \
     RUBY_GC_MALLOC_LIMIT=90000000 \
     DISCOURSE_DB_HOST=postgres \
