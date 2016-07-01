@@ -5,11 +5,41 @@ WORKDIR /usr/src/app
 ENV DISCOURSE_VERSION=1.6.0.beta10 \
     RAILS_ENV=production \
     RUBY_GC_MALLOC_LIMIT=90000000 \
+    RUBY_GLOBAL_METHOD_CACHE_SIZE=131072 \
     DISCOURSE_DB_HOST=postgres \
     DISCOURSE_REDIS_HOST=redis \
-    DISCOURSE_SERVE_STATIC_ASSETS=true
+    DISCOURSE_SERVE_STATIC_ASSETS=true \
+    GIFSICLE_VERSION=1.87 \
+    PNGQUANT_VERSION=2.4.1
 
-RUN apt-get update && apt-get install -y --no-install-recommends imagemagick libxml2 \
+RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - \
+ && apt-get update && apt-get install -y --no-install-recommends \
+      autoconf \
+      ghostscript \
+      gsfonts \
+      imagemagick \
+      jhead \
+      jpegoptim \
+      libbz2-dev \
+      libfreetype6-dev \
+      libjpeg-dev \
+      libjpeg-turbo-progs \
+      libtiff-dev \
+      libxml2 \
+      nodejs \
+      optipng \
+      pkg-config \
+ && cd /tmp \
+ && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
+ && tar zxf gifsicle-$GIFSICLE_VERSION.tar.gz \
+ && cd gifsicle-$GIFSICLE_VERSION \
+ && ./configure && make install && cd ..\
+ && wget https://github.com/pornel/pngquant/archive/$PNGQUANT_VERSION.tar.gz \
+ && tar zxf $PNGQUANT_VERSION.tar.gz \
+ && cd pngquant-$PNGQUANT_VERSION \
+ && ./configure && make && make install \
+ && npm install svgo uglify-js -g \
+ && rm -fr /tmp/* \
  && rm -rf /var/lib/apt/lists/*
 
 RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git . \
