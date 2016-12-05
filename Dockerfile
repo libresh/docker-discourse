@@ -54,13 +54,12 @@ RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discou
 # this expects a git-cloneable link
 ARG DISCOURSE_ADDITIONAL_PLUGINS=
 RUN if [ "$DISCOURSE_ADDITIONAL_PLUGINS" != "" ]; then \
-        cd plugins/ \
+        cd plugins/; \
         for PACKAGE_LINK in $DISCOURSE_ADDITIONAL_PLUGINS; do \
             git clone "$PACKAGE_LINK"; \
         done; \
         bundle exec rake plugin:update plugin=discourse-plugin-checklist; \
         bundle exec rake assets:clean; \
-        bundle exec rake assets:precompile; \
     fi
 
 EXPOSE 3000
