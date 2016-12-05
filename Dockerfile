@@ -58,8 +58,6 @@ RUN if [ "$DISCOURSE_ADDITIONAL_PLUGINS" != "" ]; then \
         for PACKAGE_LINK in $DISCOURSE_ADDITIONAL_PLUGINS; do \
             git clone "$PACKAGE_LINK"; \
         done; \
-        bundle exec rake plugin:update plugin=discourse-plugin-checklist; \
-        bundle exec rake assets:clean; \
     fi
 
 EXPOSE 3000
