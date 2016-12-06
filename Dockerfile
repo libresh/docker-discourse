@@ -11,7 +11,7 @@ ENV DISCOURSE_VERSION=1.7.0.beta3 \
     DISCOURSE_SERVE_STATIC_ASSETS=true \
     GIFSICLE_VERSION=1.87 \
     PNGQUANT_VERSION=2.4.1
-    
+
 RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - \
  && apt-get update && apt-get install -y --no-install-recommends \
       autoconf \
@@ -46,7 +46,7 @@ RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discou
  && git remote set-branches --add origin tests-passed \
  && bundle config build.nokogiri --use-system-libraries \
  && bundle install --deployment --without test --without development
- 
+
 
 # install discourse plugins
 # assumptions: no spaces in URLs (urlencoding is a thing)
