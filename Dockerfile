@@ -47,5 +47,18 @@ RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discou
  && bundle config build.nokogiri --use-system-libraries \
  && bundle install --deployment --without test --without development
 
+
+# install discourse plugins
+# assumptions: no spaces in URLs (urlencoding is a thing)
+# 
+# this expects a git-cloneable link
+ARG DISCOURSE_ADDITIONAL_PLUGINS=
+RUN if [ "$DISCOURSE_ADDITIONAL_PLUGINS" != "" ]; then \
+        cd plugins/; \
+        for PACKAGE_LINK in $DISCOURSE_ADDITIONAL_PLUGINS; do \
+            git clone "$PACKAGE_LINK"; \
+        done; \
+    fi
+
 EXPOSE 3000
 CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
