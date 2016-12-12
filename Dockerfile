@@ -44,10 +44,28 @@ RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - \
 
 RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git . \
  && git remote set-branches --add origin tests-passed \
- && bundle config build.nokogiri --use-system-libraries \
- && bundle install --deployment --without test --without development
+ && bundle config build.nokogiri --use-system-libraries
 
+# install additional gems
+# 
+# this expects a space-separated list of gem names
+ARG DISCOURSE_ADDITIONAL_GEMS=
+RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
+        echo >> Gemfile ; \
+        echo '### DISCOURSE_ADDITIONAL_GEMS' >> Gemfile ; \
+        for GEM_NAME in $DISCOURSE_ADDITIONAL_GEMS; do \
+            echo "gem \"$GEM_NAME\"" >> Gemfile ; \
+        done; \
+    fi
 
+# run bundler
+# deployment mode if no new gems added, normal mode otherwise
+RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
+        bundle install --without test --without development; \
+    else \
+        bundle install --deployment --without test --without development; \
+    fi
+    
 # install discourse plugins
 # assumptions: no spaces in URLs (urlencoding is a thing)
 # 
