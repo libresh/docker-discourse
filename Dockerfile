@@ -59,8 +59,12 @@ RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
     fi
 
 # run bundler
-#RUN bundle install --deployment --without test --without development
-RUN bundle install --without test --without development
+# deployment mode if no new gems added, normal mode otherwise
+RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
+        bundle install --without test --without development; \
+    else \
+        bundle install --deployment --without test --without development; \
+    fi
     
 # install discourse plugins
 # assumptions: no spaces in URLs (urlencoding is a thing)
