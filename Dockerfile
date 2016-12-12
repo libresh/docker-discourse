@@ -51,11 +51,10 @@ RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discou
 # this expects a space-separated list of gem names
 ARG DISCOURSE_ADDITIONAL_GEMS=
 RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
-        echo >> Gemfile \
-        echo '### DISCOURSE_ADDITIONAL_GEMS' >> Gemfile \
+        echo >> Gemfile ; \
+        echo '### DISCOURSE_ADDITIONAL_GEMS' >> Gemfile ; \
         for GEM_NAME in $DISCOURSE_ADDITIONAL_GEMS; do \
-            # add the gem to the Gemfile
-            echo "gem \"$GEM_NAME\"" >> Gemfile; \
+            echo "gem \"$GEM_NAME\"" >> Gemfile ; \
         done; \
     fi
 
