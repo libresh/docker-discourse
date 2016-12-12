@@ -47,6 +47,15 @@ RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discou
  && bundle config build.nokogiri --use-system-libraries \
  && bundle install --deployment --without test --without development
 
+# install additional gems
+# 
+# this expects a space-separated list of gem names
+ARG DISCOURSE_ADDITIONAL_GEMS=
+RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
+        for GEM_NAME in $DISCOURSE_ADDITIONAL_GEMS; do \
+            bundle exec gem install "$GEM_NAME"; \
+        done; \
+    fi
 
 # install discourse plugins
 # assumptions: no spaces in URLs (urlencoding is a thing)
