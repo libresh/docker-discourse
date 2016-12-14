@@ -2,15 +2,16 @@ FROM rails
 
 WORKDIR /usr/src/app
 
-ENV DISCOURSE_VERSION=1.7.0.beta3 \
-    RAILS_ENV=production \
+ARG DISCOURSE_VERSION=1.7.0.beta3
+ARG GIFSICLE_VERSION=1.87
+ARG PNGQUANT_VERSION=2.4.1
+
+ENV RAILS_ENV=production \
     RUBY_GC_MALLOC_LIMIT=90000000 \
     RUBY_GLOBAL_METHOD_CACHE_SIZE=131072 \
     DISCOURSE_DB_HOST=postgres \
     DISCOURSE_REDIS_HOST=redis \
-    DISCOURSE_SERVE_STATIC_ASSETS=true \
-    GIFSICLE_VERSION=1.87 \
-    PNGQUANT_VERSION=2.4.1
+    DISCOURSE_SERVE_STATIC_ASSETS=true
 
 RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - \
  && apt-get update && apt-get install -y --no-install-recommends \
