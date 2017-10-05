@@ -5,7 +5,7 @@ ENV RAILS_ENV=production \
     RUBY_GLOBAL_METHOD_CACHE_SIZE=131072 \
     DISCOURSE_DB_HOST=postgres \
     DISCOURSE_REDIS_HOST=redis \
-    DISCOURSE_SERVE_STATIC_ASSETS=true
+    DISCOURSE_SERVE_STATIC_ASSETS=true \
     GIFSICLE_VERSION=1.88 \
     PNGQUANT_VERSION=2.8.0 \
     DISCOURSE_VERSION=1.9.0.beta11 \
@@ -23,9 +23,9 @@ ENV RAILS_ENV=production \
 RUN addgroup --gid 1000 discourse \
  && adduser --system --uid 1000 --ingroup discourse --shell /bin/bash discourse \
  && cd /home/discourse \
- && mkdir ./tmp/sockets \
+ && mkdir -p ./tmp/sockets \
  && git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git \
- && chown -r discourse:discourse ./ \
+ && chown -R discourse:discourse . \
  && git remote set-branches --add origin tests-passed \
  && curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
  && apt-get update && apt-get install -y --no-install-recommends \
