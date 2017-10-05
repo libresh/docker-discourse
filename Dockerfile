@@ -1,6 +1,4 @@
-FROM rails
-
-WORKDIR /usr/src/app
+FROM ruby:2.4.1
 
 ENV RAILS_ENV=production \
     RUBY_GC_MALLOC_LIMIT=90000000 \
@@ -8,77 +6,58 @@ ENV RAILS_ENV=production \
     DISCOURSE_DB_HOST=postgres \
     DISCOURSE_REDIS_HOST=redis \
     DISCOURSE_SERVE_STATIC_ASSETS=true
-
-ARG GIFSICLE_VERSION=1.87
-ARG PNGQUANT_VERSION=2.4.1
-
-RUN curl --silent --location https://deb.nodesource.com/setup_4.x | bash - \
- && apt-get update && apt-get install -y --no-install-recommends \
+    GIFSICLE_VERSION=1.88 \
+    PNGQUANT_VERSION=2.8.0 \
+    DISCOURSE_VERSION=1.9.0.beta11 \
+    BUILD_DEPS="\
       autoconf \
-      ghostscript \
-      gsfonts \
-      imagemagick \
       jhead \
-      jpegoptim \
       libbz2-dev \
+      pkg-config \
       libfreetype6-dev \
       libjpeg-dev \
       libjpeg-turbo-progs \
-      libtiff-dev \
+      libtiff-dev"
+
+
+RUN addgroup --gid 1000 discourse \
+ && adduser --system --uid 1000 --ingroup discourse --shell /bin/bash discourse \
+ && cd /home/discourse \
+ && mkdir ./tmp/sockets \
+ && git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git \
+ && chown -r discourse:discourse ./ \
+ && git remote set-branches --add origin tests-passed \
+ && curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
+ && apt-get update && apt-get install -y --no-install-recommends \
+      ${BUILD_DEPS} \
+      jpegoptim \
       libxml2 \
       nodejs \
       optipng \
-      pkg-config \
+      ghostscript \
+      gsfonts \
+      imagemagick \
+ && npm install svgo uglify-js@"<3" -g \
  && cd /tmp \
  && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
  && tar zxf gifsicle-$GIFSICLE_VERSION.tar.gz \
  && cd gifsicle-$GIFSICLE_VERSION \
- && ./configure && make install && cd ..\
- && wget https://github.com/pornel/pngquant/archive/$PNGQUANT_VERSION.tar.gz \
- && tar zxf $PNGQUANT_VERSION.tar.gz \
- && cd pngquant-$PNGQUANT_VERSION \
- && ./configure && make && make install \
- && npm install svgo uglify-js -g \
- && rm -fr /tmp/* \
+ && ./configure && make install \
+ && cd /tmp \
+ && rm gifsicle-$GIFSICLE_VERSION.tar.gz \
+ && rm -rf gifsicle-$GIFSICLE_VERSION \
+ && git clone -b $PNGQUANT_VERSION --single-branch https://github.com/pornel/pngquant \
+ && cd pngquant \
+ && make && make install \
+ && rm -rf pngquant \
+ && cd /home/discourse/discourse \
+ && bundle config build.nokogiri --use-system-libraries \
+ && bundle install --deployment --without test --without development \
+ && apt-get remove -y --purge ${BUILD_DEPS} \
  && rm -rf /var/lib/apt/lists/*
 
-ARG DISCOURSE_VERSION=1.7.0.beta3
+WORKDIR /home/discourse/discourse
 
-RUN git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git . \
- && git remote set-branches --add origin tests-passed \
- && bundle config build.nokogiri --use-system-libraries
+USER discourse
 
-# install additional gems
-# 
-# this expects a space-separated list of gem names
-ARG DISCOURSE_ADDITIONAL_GEMS=
-RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
-        echo >> Gemfile ; \
-        echo '### DISCOURSE_ADDITIONAL_GEMS' >> Gemfile ; \
-        for GEM_NAME in $DISCOURSE_ADDITIONAL_GEMS; do \
-            echo "gem \"$GEM_NAME\"" >> Gemfile ; \
-        done; \
-    fi
-
-# run bundler
-# deployment mode if no new gems added, normal mode otherwise
-RUN if [ "$DISCOURSE_ADDITIONAL_GEMS" != "" ]; then \
-        bundle install --without test --without development; \
-    else \
-        bundle install --deployment --without test --without development; \
-    fi
-    
-# install discourse plugins
-# assumptions: no spaces in URLs (urlencoding is a thing)
-# 
-# this expects a git-cloneable link
-ARG DISCOURSE_ADDITIONAL_PLUGINS=
-RUN if [ "$DISCOURSE_ADDITIONAL_PLUGINS" != "" ]; then \
-        cd plugins/; \
-        for PACKAGE_LINK in $DISCOURSE_ADDITIONAL_PLUGINS; do \
-            git clone "$PACKAGE_LINK"; \
-        done; \
-    fi
-
-EXPOSE 3000
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
+CMD bundle exec rails server -b 0.0.0.0
