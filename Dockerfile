@@ -25,6 +25,7 @@ RUN addgroup --gid 1000 discourse \
  && cd /home/discourse \
  && mkdir -p ./tmp/sockets \
  && git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git \
+ && cd ./discourse \
  && chown -R discourse:discourse . \
  && git remote set-branches --add origin tests-passed \
  && curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
