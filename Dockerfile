@@ -37,8 +37,13 @@ RUN addgroup --gid 1000 discourse \
       libxml2 \
       nodejs \
       optipng \
-      postgresql-client \
  && npm install svgo uglify-js@"<3" -g \
+ && cd /tmp \
+ && curl -O https://get.enterprisedb.com/postgresql/postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && tar zxf postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && mv ./pgsql/bin/* /usr/local/bin/ \
+ && rm postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && rm -rf ./pgsql \
  && cd /tmp \
  && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
  && tar zxf gifsicle-$GIFSICLE_VERSION.tar.gz \
