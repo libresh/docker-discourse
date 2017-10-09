@@ -39,6 +39,7 @@ RUN addgroup --gid 1000 discourse \
       libxml2 \
       nodejs \
       optipng \
+      postgresql-client \
  && npm install svgo uglify-js@"<3" -g \
  && cd /tmp \
  && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
