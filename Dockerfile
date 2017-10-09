@@ -61,6 +61,7 @@ RUN addgroup --gid 1000 discourse \
  && rm postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
  && rm -rf ./pgsql \
  && apt-get remove -y --purge ${BUILD_DEPS} \
+ && apt-get autoremove -y \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /home/discourse/discourse
