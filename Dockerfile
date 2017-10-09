@@ -38,12 +38,6 @@ RUN addgroup --gid 1000 discourse \
       optipng \
  && npm install svgo uglify-js@"<3" -g \
  && cd /tmp \
- && curl -O https://get.enterprisedb.com/postgresql/postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
- && tar zxf postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
- && mv ./pgsql/bin/* /usr/local/bin/ \
- && rm postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
- && rm -rf ./pgsql \
- && cd /tmp \
  && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
  && tar zxf gifsicle-$GIFSICLE_VERSION.tar.gz \
  && cd gifsicle-$GIFSICLE_VERSION \
@@ -60,6 +54,12 @@ RUN addgroup --gid 1000 discourse \
  && sed -i 's/daemonize true/daemonize false/g' ./config/puma.rb \
  && bundle config build.nokogiri --use-system-libraries \
  && bundle install --deployment --without test --without development \
+ && cd /tmp \
+ && curl -O https://get.enterprisedb.com/postgresql/postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && tar zxf postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && mv ./pgsql/bin/* /usr/local/bin/ \
+ && rm postgresql-9.5.9-1-linux-x64-binaries.tar.gz \
+ && rm -rf ./pgsql \
  && apt-get remove -y --purge ${BUILD_DEPS} \
  && rm -rf /var/lib/apt/lists/*
 
