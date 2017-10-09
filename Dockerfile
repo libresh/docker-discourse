@@ -13,11 +13,11 @@ ENV RAILS_ENV=production \
       autoconf \
       jhead \
       libbz2-dev \
-      pkg-config \
       libfreetype6-dev \
       libjpeg-dev \
       libjpeg-turbo-progs \
-      libtiff-dev"
+      libtiff-dev \
+      pkg-config"
 
 
 RUN addgroup --gid 1000 discourse \
