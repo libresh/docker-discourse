@@ -25,10 +25,8 @@ RUN addgroup --gid 1000 discourse \
  && cd /home/discourse \
  && mkdir -p ./tmp/sockets \
  && git clone --branch v${DISCOURSE_VERSION} https://github.com/discourse/discourse.git \
- && cd ./discourse \
  && chown -R discourse:discourse . \
  && git remote set-branches --add origin tests-passed \
- && sed -i 's/daemonize true/daemonize false/g' ./config/puma.rb \
  && curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
  && apt-get update && apt-get install -y --no-install-recommends \
       ${BUILD_DEPS} \
@@ -54,6 +52,7 @@ RUN addgroup --gid 1000 discourse \
  && make && make install \
  && rm -rf pngquant \
  && cd /home/discourse/discourse \
+ && sed -i 's/daemonize true/daemonize false/g' ./config/puma.rb \
  && bundle config build.nokogiri --use-system-libraries \
  && bundle install --deployment --without test --without development \
  && apt-get remove -y --purge ${BUILD_DEPS} \
