@@ -32,13 +32,13 @@ RUN addgroup --gid 1000 discourse \
  && curl --silent --location https://deb.nodesource.com/setup_8.x | bash - \
  && apt-get update && apt-get install -y --no-install-recommends \
       ${BUILD_DEPS} \
+      ghostscript \
+      gsfonts \
+      imagemagick \
       jpegoptim \
       libxml2 \
       nodejs \
       optipng \
-      ghostscript \
-      gsfonts \
-      imagemagick \
  && npm install svgo uglify-js@"<3" -g \
  && cd /tmp \
  && curl -O http://www.lcdf.org/gifsicle/gifsicle-$GIFSICLE_VERSION.tar.gz \
