@@ -8,7 +8,7 @@ ENV RAILS_ENV=production \
     DISCOURSE_SERVE_STATIC_ASSETS=true \
     GIFSICLE_VERSION=1.88 \
     PNGQUANT_VERSION=2.8.0 \
-    DISCOURSE_VERSION=1.9.0.beta12 \
+    DISCOURSE_VERSION=1.9.4 \
     BUILD_DEPS="\
       autoconf \
       jhead \
